@@ -1,27 +1,24 @@
 package com.miladjafari;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import org.apache.log4j.Logger;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class Connection extends Thread {
-    private static final Logger LOG = Logger.getLogger("Connection");
+public class Connection {
+    private static final Logger logger = Logger.getLogger("Connection");
 
     private String host;
     private Integer localPort;
     private Integer port;
 
     private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private Reader reader;
+    private PrintWriter writer;
 
-    private Consumer<String> onMessage = message -> LOG.info(String.format("Received: [%s]", message));
-    private Consumer<Exception> onError = exception -> LOG.severe(String.format("Error on receiving message[%s]", exception.getMessage()));
+    private Consumer<String> onMessage = message -> logger.info(String.format("Received: [%s]", message));
+    private Consumer<Exception> onError = exception -> logger.error(String.format("Error on receiving message[%s]", exception.getMessage()));
 
     public Connection(Socket socket) {
         this.socket = socket;
@@ -40,50 +37,27 @@ public class Connection extends Thread {
         return port;
     }
 
-    private void init() {
+    public void init() {
         try {
             host = socket.getInetAddress().getHostAddress();
             port = socket.getPort();
             localPort = socket.getLocalPort();
 
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new PrintWriter(socket.getOutputStream(), true);
+            new Reader(socket).start();
+
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error on initializing connection ", e);
+            logger.error("Error on initializing connection ", e);
         }
     }
 
-    public void run() {
-        try {
-            String message;
-            while ((message = in.readLine()) != null) {
-                onMessage.accept(message);
-                if (".".equals(message)) {
-                    out.println("good bye");
-                }
-                out.println(message);
-            }
-
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error on listing to messages ", e);
-        }
-    }
-
-    public String sendMessage(String message) {
-        out.println(message);
-        String response = null;
-        try {
-            response = in.readLine();
-        } catch (IOException e) {
-            onError.accept(e);
-        }
-
-        return response;
+    public void sendMessage(String message) {
+        writer.println(message);
     }
 
     public void close() throws IOException {
-        in.close();
-        out.close();
+        writer.close();
+        reader.close();
         socket.close();
     }
 
@@ -93,5 +67,37 @@ public class Connection extends Thread {
 
     public void onError(Consumer<Exception> onError) {
         this.onError = onError;
+    }
+
+    private class Reader extends Thread {
+        private BufferedReader reader;
+
+        private void close() throws IOException {
+            reader.close();
+        }
+
+        public Reader(Socket socket) {
+            try {
+                InputStream input = socket.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(input));
+            } catch (IOException e) {
+                logger.error("Error on creating read thread", e);
+            }
+        }
+
+        public void run() {
+            while (true) {
+                try {
+                    String response = reader.readLine();
+                    if (response != null) {
+                        onMessage.accept(response);
+                    }
+                } catch (IOException exception) {
+                    logger.error("Error reading line", exception);
+                    onError.accept(exception);
+                    break;
+                }
+            }
+        }
     }
 }

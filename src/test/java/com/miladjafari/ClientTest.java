@@ -1,31 +1,34 @@
 package com.miladjafari;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ClientTest {
 
-    private Server server;
+    private Server echoServer;
     private Client client;
 
     @Before
     public void before() {
         startServer();
+
         client = new Client();
         client.connect("localhost", 4444);
     }
 
     private void startServer() {
-        server = Server.builder()
+        echoServer = Server.builder()
                 .port(4444)
                 .onConnection(connection -> {
-                    connection.onMessage(message ->
-                            System.out.println(String.format("Test Server - Connection Received [%s]", message)));
+                    connection.onMessage(message -> {
+                        System.out.println(String.format("Test Server - Connection Received [%s]", message));
+                        connection.sendMessage("Reply|" + message);
+                    });
 
                     System.out.println(String.format("Test Server - Incoming connection [%s][%s]",
                             connection.getHost(),
@@ -34,27 +37,35 @@ public class ClientTest {
                 })
                 .build();
 
-        Thread serverThread = new Thread(() -> server.start(), "ServerThread");
+        Thread serverThread = new Thread(() -> echoServer.start(), "ServerThread");
         serverThread.start();
     }
 
-    @After
-    public void after() throws IOException {
-        client.getConnection().close();
-    }
-
     @Test
-    public void testEcho() {
-        String response1 = client.getConnection().sendMessage("Msg1");
-        String response2 = client.getConnection().sendMessage("Msg2");
-        String response3 = client.getConnection().sendMessage("Msg3");
-        String response4 = client.getConnection().sendMessage("!");
-        String response5 = client.getConnection().sendMessage(".");
+    public void testEchoServer() throws InterruptedException {
+        List<String> expectedResponseList = new ArrayList<String>() {{
+            add("Reply|Msg1");
+            add("Reply|Msg2");
+            add("Reply|Msg3");
+        }};
 
-        assertEquals("Msg1", response1);
-        assertEquals("Msg2", response2);
-        assertEquals("Msg3", response3);
-        assertEquals("!", response4);
-        assertEquals("good bye", response5);
+        List<String> actualResponseList = new ArrayList<>();
+        client.getConnection().onMessage(message -> {
+            System.out.println("Test Client - Received: " + message);
+            actualResponseList.add(message);
+        });
+
+        client.getConnection().sendMessage("Msg1");
+        client.getConnection().sendMessage("Msg2");
+        client.getConnection().sendMessage("Msg3");
+
+        Thread.sleep(1000);
+
+        for (int i = 0; i < expectedResponseList.size(); i++) {
+            String expected = expectedResponseList.get(i);
+            String actual = actualResponseList.get(i);
+
+            assertEquals(expected, actual);
+        }
     }
 }

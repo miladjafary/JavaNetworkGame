@@ -1,14 +1,14 @@
 package com.miladjafari;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Server {
-    private static final Logger logger = Logger.getLogger("Server");
+    private static final Logger logger = Logger.getLogger(Server.class);
 
     private Integer port;
     private ServerSocket serverSocket;
@@ -24,12 +24,10 @@ public class Server {
             while (true) {
                 Socket socket = serverSocket.accept();
                 Connection connection = new Connection(socket);
-                connection.start();
-
                 onConnection.accept(connection);
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error in starting the server on port" + port, e);
+            logger.error(String.format("Error in starting the server on port [%s]", port), e);
         }
     }
 
@@ -37,7 +35,7 @@ public class Server {
         try {
             serverSocket.close();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "An error has been occurred in stopping the server ", e);
+            logger.error("An error has been occurred in stopping the server ", e);
         }
     }
 
