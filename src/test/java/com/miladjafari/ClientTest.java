@@ -1,8 +1,10 @@
 package com.miladjafari;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,12 @@ public class ClientTest {
 
         client = new Client();
         client.connect("localhost", 4444);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        client.getConnection().close();
+        echoServer.stop();
     }
 
     private void startServer() {

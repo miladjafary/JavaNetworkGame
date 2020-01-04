@@ -4,14 +4,15 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.function.Consumer;
 
 public class Connection {
     private static final Logger logger = Logger.getLogger("Connection");
 
-    private String host;
-    private Integer localPort;
-    private Integer port;
+    private String host = "";
+    private Integer localPort = -1;
+    private Integer port = -1;
 
     private Socket socket;
     private Reader reader;
@@ -19,6 +20,7 @@ public class Connection {
 
     private Consumer<String> onMessage = message -> logger.info(String.format("Received: [%s]", message));
     private Consumer<Exception> onError = exception -> logger.error(String.format("Error on receiving message[%s]", exception.getMessage()));
+    private Consumer<Connection> onClose = exception -> logger.info(String.format("[%s][%s] Connection is closed", host, port));
 
     public Connection(Socket socket) {
         this.socket = socket;
@@ -44,7 +46,8 @@ public class Connection {
             localPort = socket.getLocalPort();
 
             writer = new PrintWriter(socket.getOutputStream(), true);
-            new Reader(socket).start();
+            reader = new Reader(socket);
+            reader.start();
 
         } catch (IOException e) {
             logger.error("Error on initializing connection ", e);
@@ -59,10 +62,15 @@ public class Connection {
         writer.close();
         reader.close();
         socket.close();
+        onClose.accept(this);
     }
 
     public void onMessage(Consumer<String> onMessage) {
         this.onMessage = onMessage;
+    }
+
+    public void onClose(Consumer<Connection> onClose) {
+        this.onClose = onClose;
     }
 
     public void onError(Consumer<Exception> onError) {
@@ -92,9 +100,13 @@ public class Connection {
                     if (response != null) {
                         onMessage.accept(response);
                     }
+                } catch (SocketException exception) {
+                    onClose.accept(null);
+                    break;
                 } catch (IOException exception) {
                     logger.error("Error reading line", exception);
                     onError.accept(exception);
+
                     break;
                 }
             }

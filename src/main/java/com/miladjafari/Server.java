@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.function.Consumer;
 
 public class Server {
@@ -26,6 +27,8 @@ public class Server {
                 Connection connection = new Connection(socket);
                 onConnection.accept(connection);
             }
+        } catch (SocketException e) {
+            logger.info(String.format("Server has been stopped on port[%s]", port));
         } catch (IOException e) {
             logger.error(String.format("Error in starting the server on port [%s]", port), e);
         }

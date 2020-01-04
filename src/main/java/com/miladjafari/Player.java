@@ -3,28 +3,40 @@ package com.miladjafari;
 
 import org.apache.log4j.Logger;
 
+import java.util.function.Consumer;
+
 import static com.miladjafari.GameServer.CMD_PLAY_REQUEST;
 import static com.miladjafari.GameServer.CMD_PLAY_RESPONSE;
 
 public class Player {
     private static final Logger logger = Logger.getLogger(Player.class);
+
     private String name;
+
+    private Integer finishThreshold = 10;
     private Integer countOfReceivedMessages = 0;
     private Integer countOfSendMessages = 0;
 
     private Connection connection;
-
-    public Player(String name, Connection connection) {
-        this.name = name;
-        this.connection = connection;
-        this.connection.onMessage(message -> {
-            logReceivedRequest(message);
-            handleServerMessage(message);
-        });
-    }
+    private Consumer<String> onReceivedMessage = message -> {
+        logReceivedRequest(message);
+        handleServerMessage(message);
+    };
 
     public String getName() {
         return name;
+    }
+
+    public Integer getFinishThreshold() {
+        return finishThreshold;
+    }
+
+    public Integer getCountOfReceivedMessages() {
+        return countOfReceivedMessages;
+    }
+
+    public Integer getCountOfSendMessages() {
+        return countOfSendMessages;
     }
 
     private void logSendRequest(String log) {
@@ -35,54 +47,62 @@ public class Player {
         logger.info(String.format("[%s] Received: [%s]", name, log));
     }
 
-
     public void signUp() {
         String singUpRequest = GameServerMessage.builder().playerName(name).buildSignUpCommand().encodeToString();
         connection.sendMessage(singUpRequest);
         logSendRequest(singUpRequest);
     }
 
-    public void playGameWith(Player opponent) {
+    public void playGameWith(String opponent, String message) {
         String playRequest = GameServerMessage.builder()
                 .playerName(name)
-                .opponentName(opponent.getName())
-                .message("Play with me")
+                .opponentName(opponent)
+                .message(message)
                 .buildPlayRequestCommand()
                 .encodeToString();
 
-        countOfSendMessages++;
         connection.sendMessage(playRequest);
+        increaseSendMessageCount();
+
         logSendRequest(playRequest);
     }
 
     public void handleServerMessage(String message) {
+        increaseReceivedMessageCount();
         GameServerMessage gameServerMessage = GameServerMessage.builder().serverMessage(message).build();
 
         String command = gameServerMessage.getCommand();
         switch (command) {
             case CMD_PLAY_REQUEST:
-                sendReply(gameServerMessage);
+                handlePlayRequestCommand(gameServerMessage);
                 break;
             case CMD_PLAY_RESPONSE:
-                sendRequest(gameServerMessage);
+                handlePlayResponseCommand(gameServerMessage);
                 break;
         }
     }
 
-    public void sendReply(GameServerMessage incomingMessage) {
+    public void increaseSendMessageCount() {
+        countOfSendMessages++;
+    }
+
+    public void increaseReceivedMessageCount() {
         countOfReceivedMessages++;
+    }
+
+    private void handlePlayRequestCommand(GameServerMessage incomingMessage) {
         String response = GameServerMessage.builder()
                 .incomingMessage(incomingMessage)
                 .countOfReceivedMessage(countOfReceivedMessages)
                 .buildPlayResponseCommand()
                 .encodeToString();
+
         connection.sendMessage(response);
+        increaseSendMessageCount();
     }
 
-    public void sendRequest(GameServerMessage incomingMessage) {
-        int getCountOfPlayerReceivedMessage = Integer.parseInt(incomingMessage.getCountOfPlayerReceivedMessage());
-        if (getCountOfPlayerReceivedMessage < 10) {
-            countOfSendMessages++;
+    private void handlePlayResponseCommand(GameServerMessage incomingMessage) {
+        if (countOfReceivedMessages < finishThreshold) {
             String playRequest = GameServerMessage.builder()
                     .incomingMessage(incomingMessage)
                     .message(incomingMessage.getMessage() + ":" + countOfSendMessages)
@@ -90,7 +110,36 @@ public class Player {
                     .encodeToString();
             connection.sendMessage(playRequest);
 
+            increaseSendMessageCount();
             logSendRequest(playRequest);
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Player player = new Player();
+
+        public Builder name(String name) {
+            player.name = name;
+            return this;
+        }
+
+        public Builder finishThreshold(Integer finishThreshold) {
+            player.finishThreshold = finishThreshold;
+            return this;
+        }
+
+        public Builder connection(Connection connection) {
+            player.connection = connection;
+            player.connection.onMessage(player.onReceivedMessage);
+            return this;
+        }
+
+        public Player build() {
+            return player;
         }
     }
 }

@@ -4,10 +4,12 @@ import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class GameServer {
     private static final Logger logger = Logger.getLogger("GameServer");
 
+    private Server server;
     private Map<String, Connection> playersConnection = new HashMap<>();
 
     public static final String CMD_SIGN_UP = "signUp";
@@ -19,7 +21,7 @@ public class GameServer {
     }
 
     public void start() {
-        Server server = Server.builder()
+        server = Server.builder()
                 .port(4444)
                 .onConnection(connection -> {
                     logger.info(String.format("Incoming connection [%s][%s]",
@@ -28,9 +30,16 @@ public class GameServer {
                     );
 
                     connection.onMessage(message -> handleMessage(message, connection));
+                    connection.onClose(closedConnection -> {
+                        logger.info(String.format("Connection is closed JAN [%s][%s]", connection.getHost(), connection.getPort()));
+                    });
                 })
                 .build();
         server.start();
+    }
+
+    public void stop() {
+        Optional.ofNullable(server).ifPresent(Server::stop);
     }
 
     private void handleMessage(String message, Connection connection) {
@@ -51,7 +60,7 @@ public class GameServer {
     }
 
     private void signUpPlayer(String playerName, Connection playerConnection) {
-        playersConnection.putIfAbsent(playerName, playerConnection);
+        playersConnection.put(playerName, playerConnection);
         logger.debug(String.format("SingUp [%s]", playerName));
     }
 
