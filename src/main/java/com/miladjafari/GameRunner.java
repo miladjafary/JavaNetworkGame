@@ -2,14 +2,10 @@ package com.miladjafari;
 
 import com.miladjafari.tcp.Client;
 import com.miladjafari.tcp.Connection;
-import org.apache.log4j.Logger;
 
 public class GameRunner {
-    private static final Logger logger = Logger.getLogger(GameServer.class);
-
     private static final String GAME_SERVER_HOST = "localhost";
     private static final Integer GAME_SERVER_PORT = 4444;
-    private static final Integer MAX_THREADS = 30;
 
     private GameServer gameServer;
 
@@ -31,9 +27,7 @@ public class GameRunner {
 
     private Player createPlayer(String name) {
         Connection connection = openConnectionToGameServer(GAME_SERVER_HOST, GAME_SERVER_PORT);
-        Player player = Player.builder().name(name).connection(connection).build();
-
-        return player;
+        return Player.builder().name(name).connection(connection).build();
     }
 
     public static void main(String[] args) {
