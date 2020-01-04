@@ -4,6 +4,7 @@ package com.miladjafari;
 import com.miladjafari.tcp.Connection;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 import static com.miladjafari.GameServer.CMD_PLAY_REQUEST;
@@ -113,7 +114,13 @@ public class Player {
 
             increaseSendMessageCount();
             logSendRequest(playRequest);
+        } else {
+            gameOver();
         }
+    }
+
+    public void gameOver() {
+        logger.info(String.format("[%s] Game Over!", name));
     }
 
     public static Builder builder() {

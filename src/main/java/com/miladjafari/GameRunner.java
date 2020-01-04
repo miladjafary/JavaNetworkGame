@@ -4,10 +4,6 @@ import com.miladjafari.tcp.Client;
 import com.miladjafari.tcp.Connection;
 import org.apache.log4j.Logger;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class GameRunner {
     private static final Logger logger = Logger.getLogger(GameServer.class);
 
@@ -21,6 +17,10 @@ public class GameRunner {
         gameServer = new GameServer();
         Thread serverThread = new Thread(() -> gameServer.start(GAME_SERVER_PORT), "GameServer Thread");
         serverThread.start();
+    }
+
+    public void stopServer() {
+        gameServer.stop();
     }
 
     public Connection openConnectionToGameServer(String host, Integer port) {
