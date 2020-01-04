@@ -36,23 +36,15 @@ public class GameRunner {
         return player;
     }
 
-    public static void main(String[] args) throws InterruptedException {
-
-        CountDownLatch latch = new CountDownLatch(1);
-
+    public static void main(String[] args) {
         GameRunner gameRunner = new GameRunner();
         gameRunner.startServer();
 
-        Player milad = gameRunner.createPlayer("Milad");
         Player elena = gameRunner.createPlayer("Elena");
-
-        milad.signUp();
-        Thread.sleep(100);
         elena.signUp();
-//
-//
+
+        Player milad = gameRunner.createPlayer("Milad");
+        milad.signUp();
         milad.playGameWith(elena.getName(),"PlayWithMe");
-
-
     }
 }
