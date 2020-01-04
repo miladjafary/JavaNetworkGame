@@ -49,4 +49,19 @@ Command format followed by bellow rule:
     - ``OpponentName``: Name of opponent player who is responsible for processing the player request.
     - ``Message``: A custom message which is received by Opponent.
     
+    **Example**: 
+    
+    - ``playRequest|Milad|Elena|Play with me``
+- **Play response**: This command is used for sending a play request to an opponent through the ``GameServer``.
+    The format of this command is as follow:
+    
+    ``playResponse|Player|Opponent|Message|countOfReceivedMessagesByOpponent``: which is
+    - ``playRequest``: Command
+    - ``PlayerName``: Name of player who sent the request to an opponent player.
+    - ``OpponentName``: Name of opponent player who was generate the response of player request.
+    - ``Message``: A custom message which is sent by player.
+    
+    **Example**: 
+    
+    - ``playResponse|Milad|Elena|Play with me|1``
      
