@@ -1,4 +1,4 @@
-#Java Socket Programing
+# Java Socket Programing
 
 Java Network Game is a simple java client/server game which has been developed by Java Socket.
 
@@ -25,12 +25,9 @@ It accept a ``Client`` object which is connected to ``GameServer``. The game sce
     4. Player after receiving the response, increase ``Player.countOfReceivedMessages`` and if it less that 
     ``Player.finishThreshold`` repeat step 2, otherwise it will stop sending request and finish the game with opponent.
 - ``GameServerMesssage``: is a class which is used making standard request between ``Player`` and ``GameServer``. 
-This class can generate commands which are meaningful for ``GameServer`` and ``Player``:
-    
-
+This class can generate commands which are meaningful for ``GameServer`` and ``Player``.
  
- 
-###GameServer Commands
+### GameServer Commands
 The game server commands are created by ``GameServerMessage``. All commands fields has been separated by ``|`` pipeline character.
 Command format followed by bellow rule:
 
