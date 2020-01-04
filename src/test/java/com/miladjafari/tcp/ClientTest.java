@@ -1,7 +1,5 @@
 package com.miladjafari.tcp;
 
-import com.miladjafari.tcp.Client;
-import com.miladjafari.tcp.Server;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
