@@ -14,6 +14,7 @@ import static junit.framework.TestCase.assertTrue;
 public class PlayerTest {
 
     private static final Logger logger = Logger.getLogger(PlayerTest.class);
+    private static final Integer GAME_SERVER_PORT = 4444;
     private GameServer gameServer;
 
     @Before
@@ -29,14 +30,14 @@ public class PlayerTest {
 
     private void startServer() {
         gameServer = new GameServer();
-        Thread serverThread = new Thread(() -> gameServer.start(), "GameServer Thread");
+        Thread serverThread = new Thread(() -> gameServer.start(GAME_SERVER_PORT), "GameServer Thread");
         serverThread.start();
     }
 
     @Test
     public void testSuccessSignUpOnePlayerToGameServer() throws InterruptedException, IOException {
         Client client = new Client();
-        client.connect("localhost", 4444);
+        client.connect("localhost", GAME_SERVER_PORT);
 
         Player player = Player.builder().name("Milad").connection(client.getConnection()).build();
         player.signUp();
@@ -53,8 +54,8 @@ public class PlayerTest {
         Client client1 = new Client();
         Client client2 = new Client();
 
-        client1.connect("localhost", 4444);
-        client2.connect("localhost", 4444);
+        client1.connect("localhost", GAME_SERVER_PORT);
+        client2.connect("localhost", GAME_SERVER_PORT);
 
         Player player1 = Player.builder().name("Milad").connection(client1.getConnection()).build();
         Player player2 = Player.builder().name("Elena").connection(client2.getConnection()).build();
@@ -77,8 +78,8 @@ public class PlayerTest {
         Client client1 = new Client();
         Client client2 = new Client();
 
-        client1.connect("localhost", 4444);
-        client2.connect("localhost", 4444);
+        client1.connect("localhost", GAME_SERVER_PORT);
+        client2.connect("localhost", GAME_SERVER_PORT);
 
         Player milad = Player.builder().name("Milad").connection(client1.getConnection()).build();
         Player elena = Player.builder().name("Elena").connection(client2.getConnection()).build();
@@ -116,8 +117,8 @@ public class PlayerTest {
         Client client1 = new Client();
         Client client2 = new Client();
 
-        client1.connect("localhost", 4444);
-        client2.connect("localhost", 4444);
+        client1.connect("localhost", GAME_SERVER_PORT);
+        client2.connect("localhost", GAME_SERVER_PORT);
 
         Player milad = Player.builder()
                 .name("Milad")

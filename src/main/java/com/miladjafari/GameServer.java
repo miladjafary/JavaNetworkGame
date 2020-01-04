@@ -22,9 +22,9 @@ public class GameServer {
         return playersConnection;
     }
 
-    public void start() {
+    public void start(Integer port) {
         server = Server.builder()
-                .port(4444)
+                .port(port)
                 .onConnection(connection -> {
                     logger.info(String.format("Incoming connection [%s][%s]",
                             connection.getHost(),
