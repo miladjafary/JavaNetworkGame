@@ -1,4 +1,4 @@
-package com.miladjafari;
+package com.miladjafari.tcp;
 
 import com.miladjafari.tcp.Client;
 import com.miladjafari.tcp.Server;
