@@ -1,6 +1,7 @@
 package com.miladjafari;
 
 
+import com.miladjafari.tcp.Connection;
 import org.apache.log4j.Logger;
 
 import java.util.function.Consumer;

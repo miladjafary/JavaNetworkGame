@@ -1,5 +1,6 @@
 package com.miladjafari;
 
+import com.miladjafari.tcp.Client;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;

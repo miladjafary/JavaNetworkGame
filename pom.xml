@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.miladjafari</groupId>
-    <artifactId>game</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>java-network-game</artifactId>
+    <version>1.0.0.Final</version>
 
     <name>game</name>
     <url>http://www.miladjafari.com</url>

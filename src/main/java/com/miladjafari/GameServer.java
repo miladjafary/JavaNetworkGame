@@ -1,5 +1,7 @@
 package com.miladjafari;
 
+import com.miladjafari.tcp.Connection;
+import com.miladjafari.tcp.Server;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
