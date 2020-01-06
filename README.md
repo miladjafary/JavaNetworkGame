@@ -3,24 +3,24 @@
 Java Network Game is a simple java client/server game which has been developed by Java Socket.
 
 ## Creating packages
-Java Network Game can be package by maven. There three maven profile for creating packages:
-- ** game-demo.jar ** : this package is a simple demo of the game. you can package it and run it through bellow commands: 
+Java Network Game can be package by maven. There are three maven profile for creating packages:
+- **game-demo.jar** : this package is a simple demo of the game. you can package it and run it through bellow commands: 
 ```
 mvn clean install 
 java -jar game-demo.jar 
 ```
 After running this package, A game server will be started on port "4444". The two player, Milad and Elena will be signUp 
 on the game server. Then "milad" player start the game with "Elena" player. After sending 10 message to "Elena" and 
-receiving back 10 message from "Milad" the game will be finish.
-- ** game-server.jar ** : A game server will be run on an specific port and players can connect to it. Run bellow 
+receiving back 10 message, the game will be finish.
+- **game-server.jar** : A game server will be run on an specific port and players can connect to it. Run bellow 
 commands for creating this package
 ```
 mvn install -PgameServer 
 java -jar game-server.jar 4040
 ```  
-- ** player-client.jar **: this package will be used for connecting to the running game server. It will accept 
+- **player-client.jar**: this package will be used for connecting to the running game server. It will accept 
 "PlayerName", "GameServerHost", "GameServerPort" as inputs and then It will try to connect to the game server and 
-registered player as "PlayerName". Run bellow commands for creating this package
+register player as "PlayerName". Run bellow commands for creating this package
 ```
 mvn install -PplayerClient
 java -jar player-client.jar Elena localhost 4040
@@ -28,7 +28,7 @@ java -jar player-client.jar Elena localhost 4040
 
 
 ## How to run the game as Client/Server game
-For running the game a client/server game, The following steps should be followed:
+For running the game as a client/server game, The following steps should be followed:
 
 1. Run ``game-server.jar``
 ```
