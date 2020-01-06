@@ -1,4 +1,4 @@
-# Java Socket Programing
+# Java Socket Programming
 
 Java Network Game is a simple java client/server game which has been developed by Java Socket.
 
