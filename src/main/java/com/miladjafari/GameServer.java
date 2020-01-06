@@ -4,19 +4,17 @@ import com.miladjafari.tcp.Connection;
 import com.miladjafari.tcp.Server;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.miladjafari.GameServerMessage.*;
 
 public class GameServer {
     private static final Logger logger = Logger.getLogger("GameServer");
 
     private Server server;
-    private Map<String, Connection> playersConnection = new HashMap<>();
-
-    public static final String CMD_SIGN_UP = "signUp";
-    public static final String CMD_PLAY_REQUEST = "playRequest";
-    public static final String CMD_PLAY_RESPONSE = "playResponse";
+    private Map<String, Connection> playersConnection = new ConcurrentHashMap<>();
 
     public Map<String, Connection> getPlayersConnection() {
         return playersConnection;
@@ -47,7 +45,7 @@ public class GameServer {
 
 
         switch (serverMessage.getCommand()) {
-            case CMD_SIGN_UP:
+            case CMD_SIGN_UP_REQUEST:
                 signUpPlayer(serverMessage.getPlayerName(), connection);
                 break;
             case CMD_PLAY_REQUEST:
@@ -60,8 +58,21 @@ public class GameServer {
     }
 
     private void signUpPlayer(String playerName, Connection playerConnection) {
-        playersConnection.put(playerName, playerConnection);
+        GameServerMessage.Builder singUpResponseBuilder = GameServerMessage.builder().playerName(playerName);
         logger.debug(String.format("SingUp [%s]", playerName));
+
+        if (!playersConnection.containsKey(playerName)) {
+            playersConnection.put(playerName, playerConnection);
+
+            singUpResponseBuilder.message(RESULT_SING_UP_SUCCESS);
+            singUpResponseBuilder.players(playersConnection.keySet());
+
+        } else {
+            singUpResponseBuilder.message(RESULT_SING_UP_PLAYER_EXIST);
+        }
+
+        String singUpResponse = singUpResponseBuilder.buildSignUpResponseCommand().encodeToString();
+        playerConnection.sendMessage(singUpResponse);
     }
 
     private void sendPlayRequest(GameServerMessage serverMessage) {

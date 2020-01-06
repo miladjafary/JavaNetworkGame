@@ -1,17 +1,26 @@
 package com.miladjafari;
 
-import java.util.Optional;
+import java.util.*;
 
 public class GameServerMessage {
     private String command;
     private String payload;
 
+    private Set<String> players = new HashSet<>();
     private String playerName = "";
     private String opponentName = "";
     private String message = "";
     private String countOfPlayerReceivedMessage = "0";
 
     private static final String SEPARATOR = "|";
+
+    public static final String CMD_SIGN_UP_REQUEST = "signUpRequest";
+    public static final String CMD_SIGN_UP_RESPONSE = "signUpResponse";
+    public static final String CMD_PLAY_REQUEST = "playRequest";
+    public static final String CMD_PLAY_RESPONSE = "playResponse";
+
+    public static final String RESULT_SING_UP_SUCCESS = "OK";
+    public static final String RESULT_SING_UP_PLAYER_EXIST = "PlayerNameExist";
 
     public GameServerMessage() {
     }
@@ -42,6 +51,10 @@ public class GameServerMessage {
         return message;
     }
 
+    public Set<String> getPlayers() {
+        return players;
+    }
+
     public String getCountOfPlayerReceivedMessage() {
         return countOfPlayerReceivedMessage;
     }
@@ -63,13 +76,16 @@ public class GameServerMessage {
             instance.command = messageFields[0];
 
             switch (instance.command) {
-                case GameServer.CMD_SIGN_UP:
-                    setSignUpCommandFields(messageFields);
+                case GameServerMessage.CMD_SIGN_UP_REQUEST:
+                    setSignUpRequestCommandFields(messageFields);
                     break;
-                case GameServer.CMD_PLAY_REQUEST:
+                case GameServerMessage.CMD_SIGN_UP_RESPONSE:
+                    setSignUpResponseCommandFields(messageFields);
+                    break;
+                case GameServerMessage.CMD_PLAY_REQUEST:
                     setPlayRequestCommandFields(messageFields);
                     break;
-                case GameServer.CMD_PLAY_RESPONSE:
+                case GameServerMessage.CMD_PLAY_RESPONSE:
                     setPlayResponseCommandFields(messageFields);
                     break;
             }
@@ -83,6 +99,11 @@ public class GameServerMessage {
             message(gameServerMessage.getMessage());
             instance.countOfPlayerReceivedMessage = gameServerMessage.getCountOfPlayerReceivedMessage();
 
+            return this;
+        }
+
+        public Builder players(Set<String> players) {
+            instance.players = players;
             return this;
         }
 
@@ -108,10 +129,21 @@ public class GameServerMessage {
             return this;
         }
 
-        private void setSignUpCommandFields(String[] messageFields) {
+        private void setSignUpRequestCommandFields(String[] messageFields) {
             instance.playerName = messageFields[1];
 
-            buildSignUpCommand();
+            buildSignUpRequestCommand();
+        }
+
+        private void setSignUpResponseCommandFields(String[] messageFields) {
+            instance.playerName = messageFields[1];
+            instance.message = messageFields[2];
+
+            if (instance.message.equals(RESULT_SING_UP_SUCCESS)) {
+                instance.players = new HashSet<>(Arrays.asList(messageFields[3].split(",")));
+            }
+
+            buildSignUpResponseCommand();
         }
 
         private void setPlayRequestCommandFields(String[] messageFields) {
@@ -131,21 +163,28 @@ public class GameServerMessage {
             buildPlayResponseCommand();
         }
 
-        public GameServerMessage buildSignUpCommand() {
-            instance.command = GameServer.CMD_SIGN_UP;
+        public GameServerMessage buildSignUpRequestCommand() {
+            instance.command = CMD_SIGN_UP_REQUEST;
             instance.payload = instance.playerName;
             return instance;
         }
 
+        public GameServerMessage buildSignUpResponseCommand() {
+            String players = String.join(",", instance.players);
+            instance.command = CMD_SIGN_UP_RESPONSE;
+            instance.payload = String.format("%s|%s|%s", instance.playerName, instance.message, players);
+            return instance;
+        }
+
         public GameServerMessage buildPlayRequestCommand() {
-            instance.command = GameServer.CMD_PLAY_REQUEST;
+            instance.command = CMD_PLAY_REQUEST;
             instance.payload = String.format("%s|%s|%s", instance.playerName, instance.opponentName, instance.message);
 
             return instance;
         }
 
         public GameServerMessage buildPlayResponseCommand() {
-            instance.command = GameServer.CMD_PLAY_RESPONSE;
+            instance.command = CMD_PLAY_RESPONSE;
             instance.payload = String.format("%s|%s|%s|%s",
                     instance.playerName,
                     instance.opponentName,

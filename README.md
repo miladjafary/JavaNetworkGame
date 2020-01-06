@@ -2,6 +2,85 @@
 
 Java Network Game is a simple java client/server game which has been developed by Java Socket.
 
+## Creating packages
+Java Network Game can be package by maven. There three maven profile for creating packages:
+- ** game-demo.jar ** : this package is a simple demo of the game. you can package it and run it through bellow commands: 
+```
+mvn clean install 
+java -jar game-demo.jar 
+```
+After running this package, A game server will be started on port "4444". The two player, Milad and Elena will be signUp 
+on the game server. Then "milad" player start the game with "Elena" player. After sending 10 message to "Elena" and 
+receiving back 10 message from "Milad" the game will be finish.
+- ** game-server.jar ** : A game server will be run on an specific port and players can connect to it. Run bellow 
+commands for creating this package
+```
+mvn install -PgameServer 
+java -jar game-server.jar 4040
+```  
+- ** player-client.jar **: this package will be used for connecting to the running game server. It will accept 
+"PlayerName", "GameServerHost", "GameServerPort" as inputs and then It will try to connect to the game server and 
+registered player as "PlayerName". Run bellow commands for creating this package
+```
+mvn install -PplayerClient
+java -jar player-client.jar Elena localhost 4040
+```  
+
+
+## How to run the game as Client/Server game
+For running the game a client/server game, The following steps should be followed:
+
+1. Run ``game-server.jar``
+```
+java -jar game-server.jar 4040
+```
+2. Run ``player-client.jar`` for first player(e.g considered "Milad" as a first player)
+```
+java -jar player-client.jar Milad localhost 4040
+```
+3. Run ``player-client.jar`` in different console for second player(e.g considered "Elena" as a second player)
+```
+java -jar player-client.jar Elena localhost 4040
+```
+4. "Elena" will see list of registered players in game server, choose one of them and start the game.
+(e.g considered "Elena" choose "Milad" as her opponent players)
+5. After sending and receiving 10 message from "Elena" to "Milad" the game will be finish.
+
+#### Simple output of the game from "Elena" view:
+```
+2020-01-07 02:08:31.231 INFO  Client[main]: - Connecting to [localhost][4040]...
+2020-01-07 02:08:31.343 INFO  Player[main]: - [Elena] Send: [signUpRequest|Elena]
+2020-01-07 02:08:31.344 INFO  Player[Thread-0]: - [Elena] Received: [signUpResponse|Elena|OK|Milad,Elena]
+Registered players in GameServer:
+- Milad
+Enter your opponent playerName:
+Milad
+2020-01-07 02:08:56.331 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me]
+2020-01-07 02:08:56.340 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me|1]
+2020-01-07 02:08:56.344 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1]
+2020-01-07 02:08:56.349 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1|2]
+2020-01-07 02:08:56.350 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2]
+2020-01-07 02:08:56.357 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2|3]
+2020-01-07 02:08:56.360 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3]
+2020-01-07 02:08:56.365 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3|4]
+2020-01-07 02:08:56.366 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4]
+2020-01-07 02:08:56.373 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4|5]
+2020-01-07 02:08:56.374 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5]
+2020-01-07 02:08:56.382 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5|6]
+2020-01-07 02:08:56.383 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6]
+2020-01-07 02:08:56.388 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6|7]
+2020-01-07 02:08:56.390 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6:7]
+2020-01-07 02:08:56.396 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6:7|8]
+2020-01-07 02:08:56.398 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6:7:8]
+2020-01-07 02:08:56.405 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6:7:8|9]
+2020-01-07 02:08:56.410 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6:7:8:9]
+2020-01-07 02:08:56.419 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6:7:8:9|10]
+2020-01-07 02:08:56.419 INFO  Player[Thread-0]: - [Elena] Game Over!
+``` 
+
+     
+    
+
 ## Classes Responsibilities
 In following paragraph you can find the responsibilities of each class:
 - ``Server`` : this class is used for creating a TCP server and listing on a specific port
@@ -26,6 +105,13 @@ It accept a ``Client`` object which is connected to ``GameServer``. The game sce
     ``Player.finishThreshold`` repeat step 2, otherwise it will stop sending request and finish the game with opponent.
 - ``GameServerMesssage``: is a class which is used making standard request between ``Player`` and ``GameServer``. 
 This class can generate commands which are meaningful for ``GameServer`` and ``Player``.
+- ``GameDemoRunner``: This class is used for running the game server on port "4444". The two player, Milad and Elena will be signUp 
+ on the game server. Then "milad" player start the game with "Elena" player. After sending 10 message to "Elena" and 
+ receiving back 10 message from "Milad" the game will be finish.
+- ``GameServerRunner ``: This class can start a game server on an specific port. 
+- ``PlayerRunner``: is a class which is used for connecting to a ``GameServer``. It can be accepted PlayerName, 
+    GameServerHost and GameServerPort as parameters and then It will try to connect to the game server and registered player 
+    as "PlayerName".    
  
 ### GameServer Commands
 The game server commands are created by ``GameServerMessage``. All commands fields has been separated by ``|`` pipeline character.
@@ -34,9 +120,15 @@ Command format followed by bellow rule:
 ``Command|Field1|Field2|...``
 - **SingUp Request**: This command is used for singUp the players in the ``GameServer``. The format of this command is as follow:
     
-    ``signUp|PlayerName``: which is
-     - ``signUp`` : Command
-     - ``PlayerName`` : Name of player who wants register in the GameServer.
+    ``signUpRequest|PlayerName``: which is
+     - ``signUpRequest`` : Command
+     - ``PlayerName`` : Name of player who wants register in to the GameServer.
+- **SingUp Response**: This command is used for notifying player about singUp request . The format of this command is as follow:
+    ``signUpResponse|PlayerName|SingUpResult|RegisteredPlayers``: which is
+     - ``signUpResponse`` : Command
+     - ``PlayerName`` : Name of player who wants register in to the GameServer.
+     - ``SingUpResult`` : ``OK`` in case of player has successfully registered, otherwise ``PlayerNameExist``.
+     - ``RegisteredPlayers``: in case of player has successfully registered, list of registered players will return by GameServer.
 - **Play Request**: This command is used for sending a play request to an opponent through the ``GameServer``.
     The format of this command is as follow:
     

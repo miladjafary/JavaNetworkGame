@@ -3,7 +3,7 @@ package com.miladjafari;
 import com.miladjafari.tcp.Client;
 import com.miladjafari.tcp.Connection;
 
-public class GameRunner {
+public class GameDemoRunner {
     private static final String GAME_SERVER_HOST = "localhost";
     private static final Integer GAME_SERVER_PORT = 4444;
 
@@ -31,13 +31,13 @@ public class GameRunner {
     }
 
     public static void main(String[] args) {
-        GameRunner gameRunner = new GameRunner();
-        gameRunner.startServer();
+        GameDemoRunner gameDemoRunner = new GameDemoRunner();
+        gameDemoRunner.startServer();
 
-        Player elena = gameRunner.createPlayer("Elena");
+        Player elena = gameDemoRunner.createPlayer("Elena");
         elena.signUp();
 
-        Player milad = gameRunner.createPlayer("Milad");
+        Player milad = gameDemoRunner.createPlayer("Milad");
         milad.signUp();
         milad.playGameWith(elena.getName(),"PlayWithMe");
     }

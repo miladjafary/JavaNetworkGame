@@ -4,11 +4,9 @@ package com.miladjafari;
 import com.miladjafari.tcp.Connection;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 
-import static com.miladjafari.GameServer.CMD_PLAY_REQUEST;
-import static com.miladjafari.GameServer.CMD_PLAY_RESPONSE;
+import static com.miladjafari.GameServerMessage.*;
 
 public class Player {
     private static final Logger logger = Logger.getLogger(Player.class);
@@ -23,6 +21,15 @@ public class Player {
     private Consumer<String> onReceivedMessage = message -> {
         logReceivedRequest(message);
         handleServerMessage(message);
+    };
+
+    private Consumer<GameServerMessage> onSingUpResponse = singUpResponse -> {
+        String logMessage = singUpResponse.getMessage();
+        if (singUpResponse.getMessage().equals(RESULT_SING_UP_SUCCESS)) {
+            logMessage = String.format("Successful. Registered Players %s", singUpResponse.getPlayers());
+        }
+
+        logger.info(String.format("[%s] SingUp result: %s ", name, logMessage));
     };
 
     public String getName() {
@@ -50,7 +57,7 @@ public class Player {
     }
 
     public void signUp() {
-        String singUpRequest = GameServerMessage.builder().playerName(name).buildSignUpCommand().encodeToString();
+        String singUpRequest = GameServerMessage.builder().playerName(name).buildSignUpRequestCommand().encodeToString();
         connection.sendMessage(singUpRequest);
         logSendRequest(singUpRequest);
     }
@@ -70,15 +77,19 @@ public class Player {
     }
 
     public void handleServerMessage(String message) {
-        increaseReceivedMessageCount();
         GameServerMessage gameServerMessage = GameServerMessage.builder().serverMessage(message).build();
 
         String command = gameServerMessage.getCommand();
         switch (command) {
+            case CMD_SIGN_UP_RESPONSE:
+                handleSingUpResponse(gameServerMessage);
+                break;
             case CMD_PLAY_REQUEST:
+                increaseReceivedMessageCount();
                 handlePlayRequestCommand(gameServerMessage);
                 break;
             case CMD_PLAY_RESPONSE:
+                increaseReceivedMessageCount();
                 handlePlayResponseCommand(gameServerMessage);
                 break;
         }
@@ -90,6 +101,10 @@ public class Player {
 
     public void increaseReceivedMessageCount() {
         countOfReceivedMessages++;
+    }
+
+    private void handleSingUpResponse(GameServerMessage gameServerMessage) {
+        onSingUpResponse.accept(gameServerMessage);
     }
 
     private void handlePlayRequestCommand(GameServerMessage incomingMessage) {
@@ -143,6 +158,11 @@ public class Player {
         public Builder connection(Connection connection) {
             player.connection = connection;
             player.connection.onMessage(player.onReceivedMessage);
+            return this;
+        }
+
+        public Builder onSingUpResponse(Consumer<GameServerMessage> onSingUpResponse) {
+            player.onSingUpResponse = onSingUpResponse;
             return this;
         }
 
