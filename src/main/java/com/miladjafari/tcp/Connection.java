@@ -20,7 +20,7 @@ public class Connection {
 
     private Consumer<String> onMessage = message -> logger.info(String.format("Received: [%s]", message));
     private Consumer<Exception> onError = exception -> logger.error(String.format("Error on receiving message[%s]", exception.getMessage()));
-    private Consumer<Connection> onClose = exception -> logger.info(String.format("[%s][%s] Connection is closed", host, port));
+    private Consumer<Connection> onClose = exception -> logger.info(String.format("[%s][%s] Connection has been closed", host, port));
 
     public Connection(Socket socket) {
         this.socket = socket;

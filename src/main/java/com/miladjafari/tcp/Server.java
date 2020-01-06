@@ -3,6 +3,7 @@ package com.miladjafari.tcp;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -27,8 +28,10 @@ public class Server {
                 Connection connection = new Connection(socket);
                 onConnection.accept(connection);
             }
+        } catch (BindException e) {
+            logger.error(String.format("Port [%s] already in use", port));
         } catch (SocketException e) {
-            logger.info(String.format("Server has been stopped on port[%s]", port));
+            logger.error(String.format("Server has been stopped on port[%s]", port));
         } catch (IOException e) {
             logger.error(String.format("Error in starting the server on port [%s]", port), e);
         }

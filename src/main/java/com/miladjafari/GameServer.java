@@ -26,15 +26,13 @@ public class GameServer {
         server = Server.builder()
                 .port(port)
                 .onConnection(connection -> {
-                    logger.info(String.format("Incoming connection [%s][%s]",
+                    logger.info(String.format("[%s][%s] Connected",
                             connection.getHost(),
                             connection.getPort())
                     );
 
                     connection.onMessage(message -> handleMessage(message, connection));
-                    connection.onClose(closedConnection -> {
-                        logger.info(String.format("Connection is closed JAN [%s][%s]", connection.getHost(), connection.getPort()));
-                    });
+                    connection.onClose(closedConnection -> logger.info(String.format("[%s][%s] Connection has been Closed", connection.getHost(), connection.getPort())));
                 })
                 .build();
         server.start();

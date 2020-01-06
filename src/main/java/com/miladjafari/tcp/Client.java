@@ -17,7 +17,8 @@ public class Client {
     public void connect(String host, Integer port) {
         try {
             logger.info(String.format("Connecting to [%s][%s]...", host, port));
-            connection = new Connection(new Socket(host, port));
+            Socket socket = new Socket(host, port);
+            connection = new Connection(socket);
         } catch (IOException exception) {
             logger.error(String.format("Error in connection to the server on [%s][%d]", host, port), exception);
         }
