@@ -48,12 +48,16 @@ public class Player {
         return countOfSendMessages;
     }
 
+    private void infoLogRequest(String log) {
+        logger.info(String.format("[%s]: [%s]", name, log));
+    }
+
     private void logSendRequest(String log) {
-        logger.info(String.format("[%s] Send: [%s]", name, log));
+        logger.debug(String.format("[%s] Send: [%s]", name, log));
     }
 
     private void logReceivedRequest(String log) {
-        logger.info(String.format("[%s] Received: [%s]", name, log));
+        logger.debug(String.format("[%s] Received: [%s]", name, log));
     }
 
     public void signUp() {
@@ -74,6 +78,7 @@ public class Player {
         increaseSendMessageCount();
 
         logSendRequest(playRequest);
+        infoLogRequest(message);
     }
 
     public void handleServerMessage(String message) {
@@ -108,26 +113,34 @@ public class Player {
     }
 
     private void handlePlayRequestCommand(GameServerMessage incomingMessage) {
+        String message = incomingMessage.getMessage() + countOfSendMessages;
         String response = GameServerMessage.builder()
                 .incomingMessage(incomingMessage)
+                .message(message)
                 .countOfReceivedMessage(countOfReceivedMessages)
                 .buildPlayResponseCommand()
                 .encodeToString();
 
         connection.sendMessage(response);
         increaseSendMessageCount();
+
+        infoLogRequest(message);
+        logSendRequest(response);
     }
 
     private void handlePlayResponseCommand(GameServerMessage incomingMessage) {
         if (countOfReceivedMessages < finishThreshold) {
+            String message = incomingMessage.getMessage() + countOfSendMessages;
             String playRequest = GameServerMessage.builder()
                     .incomingMessage(incomingMessage)
-                    .message(incomingMessage.getMessage() + ":" + countOfSendMessages)
+                    .message(message)
                     .buildPlayRequestCommand()
                     .encodeToString();
             connection.sendMessage(playRequest);
 
             increaseSendMessageCount();
+
+            infoLogRequest(message);
             logSendRequest(playRequest);
         } else {
             gameOver();

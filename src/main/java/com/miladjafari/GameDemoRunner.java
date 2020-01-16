@@ -39,6 +39,6 @@ public class GameDemoRunner {
 
         Player milad = gameDemoRunner.createPlayer("Milad");
         milad.signUp();
-        milad.playGameWith(elena.getName(),"PlayWithMe");
+        milad.playGameWith(elena.getName(),"Hello");
     }
 }

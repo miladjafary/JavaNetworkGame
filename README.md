@@ -11,7 +11,37 @@ java -jar game-demo.jar
 ```
 After running this package, A game server will be started on port "4444". The two player, Milad and Elena will be signUp 
 on the game server. Then "milad" player start the game with "Elena" player. After sending 10 message to "Elena" and 
-receiving back 10 message, the game will be finish.
+receiving back 10 message, the game will be finish.You can see the output in the following:
+```
+2020-01-16 14:48:28.294 INFO  Client[main]: - Connecting to [localhost][4444]...
+2020-01-16 14:48:28.297 INFO  Server[GameServer Thread]: - Server is listing on port 4444
+2020-01-16 14:48:28.318 INFO  GameServer[GameServer Thread]: - [127.0.0.1][53388] Connected
+2020-01-16 14:48:28.328 INFO  Client[main]: - Connecting to [localhost][4444]...
+2020-01-16 14:48:28.330 INFO  GameServer[GameServer Thread]: - [127.0.0.1][53389] Connected
+2020-01-16 14:48:28.331 INFO  Player[main]: - [Milad]: [Hello]
+2020-01-16 14:48:28.331 INFO  Player[Thread-0]: - [Elena] SingUp result: Successful. Registered Players [Elena] 
+2020-01-16 14:48:28.333 INFO  Player[Thread-2]: - [Milad] SingUp result: Successful. Registered Players [Milad, Elena] 
+2020-01-16 14:48:28.336 INFO  Player[Thread-0]: - [Elena]: [Hello0]
+2020-01-16 14:48:28.337 INFO  Player[Thread-2]: - [Milad]: [Hello01]
+2020-01-16 14:48:28.338 INFO  Player[Thread-0]: - [Elena]: [Hello011]
+2020-01-16 14:48:28.339 INFO  Player[Thread-2]: - [Milad]: [Hello0112]
+2020-01-16 14:48:28.340 INFO  Player[Thread-0]: - [Elena]: [Hello01122]
+2020-01-16 14:48:28.341 INFO  Player[Thread-2]: - [Milad]: [Hello011223]
+2020-01-16 14:48:28.342 INFO  Player[Thread-0]: - [Elena]: [Hello0112233]
+2020-01-16 14:48:28.342 INFO  Player[Thread-2]: - [Milad]: [Hello01122334]
+2020-01-16 14:48:28.343 INFO  Player[Thread-0]: - [Elena]: [Hello011223344]
+2020-01-16 14:48:28.344 INFO  Player[Thread-2]: - [Milad]: [Hello0112233445]
+2020-01-16 14:48:28.345 INFO  Player[Thread-0]: - [Elena]: [Hello01122334455]
+2020-01-16 14:48:28.345 INFO  Player[Thread-2]: - [Milad]: [Hello011223344556]
+2020-01-16 14:48:28.346 INFO  Player[Thread-0]: - [Elena]: [Hello0112233445566]
+2020-01-16 14:48:28.347 INFO  Player[Thread-2]: - [Milad]: [Hello01122334455667]
+2020-01-16 14:48:28.348 INFO  Player[Thread-0]: - [Elena]: [Hello011223344556677]
+2020-01-16 14:48:28.349 INFO  Player[Thread-2]: - [Milad]: [Hello0112233445566778]
+2020-01-16 14:48:28.349 INFO  Player[Thread-0]: - [Elena]: [Hello01122334455667788]
+2020-01-16 14:48:28.350 INFO  Player[Thread-2]: - [Milad]: [Hello011223344556677889]
+2020-01-16 14:48:28.351 INFO  Player[Thread-0]: - [Elena]: [Hello0112233445566778899]
+2020-01-16 14:48:28.351 INFO  Player[Thread-2]: - [Milad] Game Over!
+``` 
 - **game-server.jar** : A game server will be run on an specific port and players can connect to it. Run bellow 
 commands for creating this package
 ```
@@ -55,27 +85,17 @@ Registered players in GameServer:
 - Milad
 Enter your opponent playerName:
 Milad
-2020-01-07 02:08:56.331 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me]
-2020-01-07 02:08:56.340 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me|1]
-2020-01-07 02:08:56.344 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1]
-2020-01-07 02:08:56.349 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1|2]
-2020-01-07 02:08:56.350 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2]
-2020-01-07 02:08:56.357 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2|3]
-2020-01-07 02:08:56.360 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3]
-2020-01-07 02:08:56.365 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3|4]
-2020-01-07 02:08:56.366 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4]
-2020-01-07 02:08:56.373 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4|5]
-2020-01-07 02:08:56.374 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5]
-2020-01-07 02:08:56.382 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5|6]
-2020-01-07 02:08:56.383 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6]
-2020-01-07 02:08:56.388 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6|7]
-2020-01-07 02:08:56.390 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6:7]
-2020-01-07 02:08:56.396 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6:7|8]
-2020-01-07 02:08:56.398 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6:7:8]
-2020-01-07 02:08:56.405 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6:7:8|9]
-2020-01-07 02:08:56.410 INFO  Player[Thread-0]: - [Elena] Send: [playRequest|Elena|Milad|Play with me:1:2:3:4:5:6:7:8:9]
-2020-01-07 02:08:56.419 INFO  Player[Thread-0]: - [Elena] Received: [playResponse|Elena|Milad|Play with me:1:2:3:4:5:6:7:8:9|10]
-2020-01-07 02:08:56.419 INFO  Player[Thread-0]: - [Elena] Game Over!
+2020-01-16 14:25:45.878 INFO  Player[Thread-0]: - [Elena]: [Play with me]
+2020-01-16 14:25:45.885 INFO  Player[Thread-0]: - [Elena]: [Play with me01]
+2020-01-16 14:25:45.895 INFO  Player[Thread-0]: - [Elena]: [Play with me0112]
+2020-01-16 14:25:45.901 INFO  Player[Thread-0]: - [Elena]: [Play with me011223]
+2020-01-16 14:25:45.909 INFO  Player[Thread-0]: - [Elena]: [Play with me01122334]
+2020-01-16 14:25:45.917 INFO  Player[Thread-0]: - [Elena]: [Play with me0112233445]
+2020-01-16 14:25:45.921 INFO  Player[Thread-0]: - [Elena]: [Play with me011223344556]
+2020-01-16 14:25:45.928 INFO  Player[Thread-0]: - [Elena]: [Play with me01122334455667]
+2020-01-16 14:25:45.933 INFO  Player[Thread-0]: - [Elena]: [Play with me0112233445566778]
+2020-01-16 14:25:45.941 INFO  Player[Thread-0]: - [Elena]: [Play with me011223344556677889]
+2020-01-16 14:25:45.952 INFO  Player[Thread-0]: - [Elena] Game Over!
 ``` 
 
      

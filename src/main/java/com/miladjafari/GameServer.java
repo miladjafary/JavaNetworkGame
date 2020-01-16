@@ -98,10 +98,10 @@ public class GameServer {
     }
 
     private void logReceivedMessage(String playerName, GameServerMessage serverMessage) {
-        logger.info(String.format("Received [%s]: [%s]", playerName, serverMessage.encodeToString()));
+        logger.debug(String.format("Received [%s]: [%s]", playerName, serverMessage.encodeToString()));
     }
 
     private void logSendMessage(String playerName, GameServerMessage serverMessage) {
-        logger.info(String.format("Send     [%s]: [%s]", playerName, serverMessage.encodeToString()));
+        logger.debug(String.format("Send     [%s]: [%s]", playerName, serverMessage.encodeToString()));
     }
 }
