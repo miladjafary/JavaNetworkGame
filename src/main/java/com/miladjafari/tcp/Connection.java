@@ -46,7 +46,7 @@ public class Connection {
             localPort = socket.getLocalPort();
 
             writer = new PrintWriter(socket.getOutputStream(), true);
-            reader = new Reader(socket);
+            reader = new Reader(socket, this);
             reader.start();
 
         } catch (IOException e) {
@@ -79,15 +79,17 @@ public class Connection {
 
     private class Reader extends Thread {
         private BufferedReader reader;
+        private Connection connection;
 
         private void close() throws IOException {
             reader.close();
         }
 
-        public Reader(Socket socket) {
+        public Reader(Socket socket, Connection connection) {
             try {
                 InputStream input = socket.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(input));
+                this.connection = connection;
             } catch (IOException e) {
                 logger.error("Error on creating read thread", e);
             }
@@ -101,10 +103,11 @@ public class Connection {
                         onMessage.accept(response);
                     }
                 } catch (SocketException exception) {
-                    onClose.accept(null);
+                    onClose.accept(connection);
                     break;
                 } catch (IOException exception) {
                     logger.error("Error reading line", exception);
+                    onClose.accept(connection);
                     onError.accept(exception);
 
                     break;

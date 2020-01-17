@@ -30,7 +30,7 @@ public class GameServer {
                     );
 
                     connection.onMessage(message -> handleMessage(message, connection));
-                    connection.onClose(closedConnection -> logger.info(String.format("[%s][%s] Connection has been Closed", connection.getHost(), connection.getPort())));
+                    connection.onClose(this::removePlayer);
                 })
                 .build();
         server.start();
@@ -55,6 +55,26 @@ public class GameServer {
                 sendPlayResponse(serverMessage);
                 break;
         }
+    }
+
+    private void removePlayer(Connection playerClosedConnection) {
+        Optional<Map.Entry<String, Connection>> foundPlayer = playersConnection.entrySet()
+                .stream()
+                .filter(player -> {
+                    Connection playerConnection = player.getValue();
+                    return playerConnection.getHost().equals(playerClosedConnection.getHost())
+                            && playerConnection.getPort().equals(playerClosedConnection.getPort());
+                })
+                .findFirst();
+
+        foundPlayer.ifPresent(player -> playersConnection.remove(player.getKey()));
+        logger.info(
+                String.format("[%s][%s] \"%s\" Connection has been Closed",
+                        playerClosedConnection.getHost(),
+                        playerClosedConnection.getPort(),
+                        foundPlayer.map(Map.Entry::getKey).orElse("?")
+                )
+        );
     }
 
     private void signUpPlayer(String playerName, Connection playerConnection) {

@@ -28,7 +28,6 @@ public class PlayerTest {
         gameServer.stop();
     }
 
-
     private void startServer() {
         gameServer = new GameServer();
         Thread serverThread = new Thread(() -> gameServer.start(GAME_SERVER_PORT), "GameServer Thread");
@@ -197,6 +196,5 @@ public class PlayerTest {
         assertEquals(FINISH_THRESHOLD, elena.getCountOfReceivedMessages());
         assertEquals(FINISH_THRESHOLD, elena.getCountOfSendMessages());
     }
-
 
 }
