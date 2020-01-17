@@ -9,6 +9,9 @@ public class GameDemoRunner {
 
     private GameServer gameServer;
 
+    private Player elena;
+    private Player milad;
+
     public void startServer() {
         gameServer = new GameServer();
         Thread serverThread = new Thread(() -> gameServer.start(GAME_SERVER_PORT), "GameServer Thread");
@@ -25,20 +28,27 @@ public class GameDemoRunner {
         return client.getConnection();
     }
 
-    private Player createPlayer(String name) {
+    private void run() {
+        startServer();
+
+        Connection player1Connection = openConnectionToGameServer(GAME_SERVER_HOST, GAME_SERVER_PORT);
+        elena = Player.builder()
+                .name("Elena")
+                .connection(player1Connection)
+                .build();
+        elena.signUp();
+
         Connection connection = openConnectionToGameServer(GAME_SERVER_HOST, GAME_SERVER_PORT);
-        return Player.builder().name(name).connection(connection).build();
+        milad = Player.builder()
+                .name("Milad")
+                .connection(connection)
+                .onSingUpResponse(gameServerMessage -> milad.playGameWith(elena.getName(), "Hello"))
+                .build();
+        milad.signUp();
     }
 
     public static void main(String[] args) {
         GameDemoRunner gameDemoRunner = new GameDemoRunner();
-        gameDemoRunner.startServer();
-
-        Player elena = gameDemoRunner.createPlayer("Elena");
-        elena.signUp();
-
-        Player milad = gameDemoRunner.createPlayer("Milad");
-        milad.signUp();
-        milad.playGameWith(elena.getName(),"Hello");
+        gameDemoRunner.run();
     }
 }

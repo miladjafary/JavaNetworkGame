@@ -67,6 +67,27 @@
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <delete file="${project.build.outputDirectory}/log4j.properties" />
+                                        <copy file="src/main/resources/log4j-game-server.properties"
+                                              tofile="${project.build.outputDirectory}/log4j.properties"/>
+                                        <delete >
+                                            <fileset dir="${project.build.outputDirectory}/" includes="log4j-game*" />
+                                        </delete>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
                         <executions>
@@ -90,9 +111,30 @@
             </build>
         </profile>
         <profile>
-            <id>playerClient</id>
+            <id>gameClient</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <delete file="${project.build.outputDirectory}/log4j.properties" />
+                                        <copy file="src/main/resources/log4j-game-client.properties"
+                                              tofile="${project.build.outputDirectory}/log4j.properties"/>
+                                        <delete >
+                                            <fileset dir="${project.build.outputDirectory}/" includes="log4j-game*" />
+                                        </delete>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
@@ -108,7 +150,7 @@
                                             <mainClass>com.miladjafari.PlayerRunner</mainClass>
                                         </transformer>
                                     </transformers>
-                                    <finalName>player-client</finalName>
+                                    <finalName>game-client</finalName>
                                 </configuration>
                             </execution>
                         </executions>
@@ -123,6 +165,27 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <delete file="${project.build.outputDirectory}/log4j.properties" />
+                                        <copy file="src/main/resources/log4j-game-demo.properties"
+                                              tofile="${project.build.outputDirectory}/log4j.properties"/>
+                                        <delete >
+                                            <fileset dir="${project.build.outputDirectory}/" includes="log4j-game*" />
+                                        </delete>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>

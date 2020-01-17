@@ -35,6 +35,7 @@ receiving back 10 message, the game will be finish.You can see the output in the
 2020-01-16 14:48:28.345 INFO  Player[Thread-2]: - [Milad]: [Hello011223344556]
 2020-01-16 14:48:28.346 INFO  Player[Thread-0]: - [Elena]: [Hello0112233445566]
 2020-01-16 14:48:28.347 INFO  Player[Thread-2]: - [Milad]: [Hello01122334455667]
+2020-01-16 14:48:28.347 INFO  Player[Thread-2]: - [Milad]: [Hello01122334455667]
 2020-01-16 14:48:28.348 INFO  Player[Thread-0]: - [Elena]: [Hello011223344556677]
 2020-01-16 14:48:28.349 INFO  Player[Thread-2]: - [Milad]: [Hello0112233445566778]
 2020-01-16 14:48:28.349 INFO  Player[Thread-0]: - [Elena]: [Hello01122334455667788]
@@ -48,12 +49,12 @@ commands for creating this package
 mvn install -PgameServer 
 java -jar game-server.jar 4040
 ```  
-- **player-client.jar**: this package will be used for connecting to the running game server. It will accept 
+- **game-client.jar**: this package will be used for connecting to the running game server. It will accept 
 "PlayerName", "GameServerHost", "GameServerPort" as inputs and then It will try to connect to the game server and 
 register player as "PlayerName". Run bellow commands for creating this package
 ```
-mvn install -PplayerClient
-java -jar player-client.jar Elena localhost 4040
+mvn install -PgameClient
+java -jar game-client.jar Elena localhost 4040
 ```  
 
 
@@ -64,13 +65,13 @@ For running the game as a client/server game, The following steps should be foll
 ```
 java -jar game-server.jar 4040
 ```
-2. Run ``player-client.jar`` for first player(e.g considered "Milad" as a first player)
+2. Run ``game-client.jar`` for first player(e.g considered "Milad" as a first player)
 ```
-java -jar player-client.jar Milad localhost 4040
+java -jar game-client.jar Milad localhost 4040
 ```
-3. Run ``player-client.jar`` in different console for second player(e.g considered "Elena" as a second player)
+3. Run ``game-client.jar`` in different console for second player(e.g considered "Elena" as a second player)
 ```
-java -jar player-client.jar Elena localhost 4040
+java -jar game-client.jar Elena localhost 4040
 ```
 4. "Elena" will see list of registered players in game server, choose one of them and start the game.
 (e.g considered "Elena" choose "Milad" as her opponent players)
